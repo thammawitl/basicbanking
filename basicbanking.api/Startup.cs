@@ -33,6 +33,7 @@ namespace basicbanking.api
         {
 
             services.AddControllers();
+            services.AddScoped<DbContext, PostgresDbContext>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "basicbanking.api", Version = "v1" });
