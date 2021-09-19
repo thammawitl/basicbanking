@@ -8,10 +8,15 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace basicbanking.api.test
 {
-    public class ControllerTest
+    public class ControllerTest : IDisposable
     {
         public UsersController _userController;
         public BankAccountController _bankaccountController;
+
+        public void Dispose()
+        {
+
+        }
 
         public void InitTest()
         {
@@ -68,13 +73,8 @@ namespace basicbanking.api.test
             this.Test_DepositBalanceHandler(1, 500, (float)499.50);
             this.Test_DepositBalanceHandler(2, 750, (float)1749.25);
             this.Test_DepositBalanceHandler(3, 1000, (float)1499);
-        }
 
-        public void Test_DepositBalanceHandler(long acId1, float amount, float expectedBalance)
-        {
-            var balance = this._controllerInstance._bankaccountController.Deposit(acId1, amount);
-
-            Assert.Equal<float>(expectedBalance, balance);
+            this._controllerInstance.Dispose();
         }
 
         [Fact]
@@ -85,7 +85,16 @@ namespace basicbanking.api.test
             this.Test_TransferCashHandler(2, 1, 500, 500, 500);
             this.Test_TransferCashHandler(1, 3, 250, 250, 750);
             this.Test_TransferCashHandler(2, 3, 250, 250, 1000);
-            this.Test_TransferCashHandler(3, 1, 1000, 1250, 0);
+            this.Test_TransferCashHandler(3, 1, 1000, 0, 1250);
+
+            this._controllerInstance.Dispose();
+        }
+
+        public void Test_DepositBalanceHandler(long acId1, float amount, float expectedBalance)
+        {
+            var balance = this._controllerInstance._bankaccountController.Deposit(acId1, amount);
+
+            Assert.Equal<float>(expectedBalance, balance);
         }
 
         public void Test_TransferCashHandler(long acId1, long acId2, float amount, float expectedBalance1, float expectedBalance2)
@@ -96,8 +105,8 @@ namespace basicbanking.api.test
             account2.Balance += amount;
             this._controllerInstance._bankaccountController.UpdateItem(account1);
             this._controllerInstance._bankaccountController.UpdateItem(account2);
-            Assert.Equal<float>(expectedBalance1, expectedBalance2);
-            Assert.Equal<float>(expectedBalance1, expectedBalance2);
+            Assert.Equal<float>(expectedBalance1, account1.Balance);
+            Assert.Equal<float>(expectedBalance2, account2.Balance);
         }
 
 
