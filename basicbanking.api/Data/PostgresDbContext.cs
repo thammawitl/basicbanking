@@ -12,10 +12,6 @@ namespace basicbanking.api.Data
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
-			modelBuilder.Entity<User>()
-				.HasOne<BankAccount>(s => s.Account)
-				.WithOne(cs => cs.User)
-				.HasForeignKey<BankAccount>(ca => ca.UserId);
 		}
 
 		public DbSet<User> Users { get; set; }

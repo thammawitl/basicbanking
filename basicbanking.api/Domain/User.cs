@@ -9,8 +9,6 @@ namespace basicbanking.api.Domain
     {
         public string Name { get; set; }
 
-        public virtual BankAccount Account { get; set; }
-
-        public DateTime CreatedDate { get; set; }
+        public virtual ICollection<BankAccount> BankAccounts { get; set; }
     }
 }

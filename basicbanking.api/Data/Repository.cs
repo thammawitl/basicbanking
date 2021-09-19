@@ -41,7 +41,7 @@ namespace basicbanking.api.Data
             var query = this.context.Set<T>().AsQueryable();
 
             foreach (var inc in this.includePaths)
-                query = query.Include(inc).AsQueryable();
+                query = query.Include(inc);
 
             return query.Where(expression);
         }
@@ -51,9 +51,17 @@ namespace basicbanking.api.Data
             var query = this.Find(i => i.Id == id);
 
             foreach (var inc in this.includePaths)
-                query = query.Include(inc).AsQueryable();
+                query = query.Include(inc);
 
             return query.FirstOrDefault();
+        }
+
+        public IRepository<T> Include<TProperty>(Expression<Func<T, TProperty>> path)
+        {
+            var expression = (MemberExpression)path.Body;
+            string name = expression.Member.Name;
+            this.includePaths.Add(name);
+            return this;
         }
     }
 }
