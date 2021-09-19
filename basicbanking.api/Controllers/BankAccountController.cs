@@ -32,7 +32,7 @@ namespace basicbanking.api.Controllers
             BankAccount account = base.GetItemById(itemId);
 
             // Fee 0.1% = 0.001
-            account.Balance = (float)(account.Balance + (amount * 0.001));
+            account.Balance = (float)(account.Balance + (amount - (amount * 0.001)));
             base.UpdateItem(account);
             return Ok(account.Balance);
         }
