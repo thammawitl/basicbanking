@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "basicbanking.api"
+		},
+		{
+			"path": "basicbanking.web"
+		}
+	],
+	"settings": {}
+}
