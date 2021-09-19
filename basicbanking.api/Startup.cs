@@ -15,7 +15,6 @@ using Microsoft.EntityFrameworkCore;
 
 using basicbanking.api.Data;
 using basicbanking.api.Domain;
-using basicbanking.api.Controllers;
 
 namespace basicbanking.api
 {
@@ -32,7 +31,10 @@ namespace basicbanking.api
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
+
             services.AddScoped<DbContext, PostgresDbContext>();
             services.AddSwaggerGen(c =>
             {
@@ -95,8 +97,7 @@ namespace basicbanking.api
                 {
                     defaultUser = new User
                     {
-                        Name = "Default User",
-                        CreatedDate = DateTime.Now,
+                        Name = "Default User"
                     };
                     userRepo.Insert(defaultUser);
                     var defaultUserAccount = new BankAccount
