@@ -14,6 +14,8 @@ using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 
 using basicbanking.api.Data;
+using basicbanking.api.Domain;
+using basicbanking.api.Controllers;
 
 namespace basicbanking.api
 {
@@ -51,7 +53,9 @@ namespace basicbanking.api
                 services.AddEntityFrameworkNpgsql().AddDbContext<PostgresDbContext>(options => options.UseNpgsql(connectionString));
             }
 
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         }
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -72,6 +76,37 @@ namespace basicbanking.api
             {
                 endpoints.MapControllers();
             });
+
+            using (var serviceScope = app.ApplicationServices.CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetService<PostgresDbContext>();
+
+                if (context.Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
+                {
+                    context.Database.Migrate();
+                }
+
+                IRepository<User> userRepo = serviceScope.ServiceProvider.GetService<IRepository<User>>();
+                IRepository<BankAccount> bankAccountRepo = serviceScope.ServiceProvider.GetService<IRepository<BankAccount>>();
+
+                var defaultUser = userRepo.Find(u => u.Name == "Default User").FirstOrDefault();
+                if (defaultUser == null)
+                {
+                    defaultUser = new User
+                    {
+                        Name = "Default User",
+                        CreatedDate = DateTime.Now,
+                    };
+                    userRepo.Insert(defaultUser);
+                    var defaultUserAccount = new BankAccount
+                    {
+                        IBAN = "NL66ABNA7951708135",
+                        Balance = 50,
+                        UserId = defaultUser.Id
+                    };
+                    bankAccountRepo.Insert(defaultUserAccount);
+                }
+            }
         }
     }
 }
