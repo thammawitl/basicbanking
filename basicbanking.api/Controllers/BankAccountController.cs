@@ -27,14 +27,15 @@ namespace basicbanking.api.Controllers
         [HttpPost]
         [Route("deposit")]
         //Deposit
-        public IActionResult Deposit(long itemId, float amount)
+        public float Deposit(long itemId, float amount)
         {
             BankAccount account = base.GetItemById(itemId);
 
             // Fee 0.1% = 0.001
             account.Balance = (float)(account.Balance + (amount - (amount * 0.001)));
+            account.Balance = (float)Math.Round(account.Balance * 100f) / 100f;
             base.UpdateItem(account);
-            return Ok(account.Balance);
+            return account.Balance;
         }
 
         [HttpPost]
