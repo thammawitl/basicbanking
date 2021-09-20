@@ -5,6 +5,7 @@ using basicbanking.api.Controllers;
 using basicbanking.api.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using basicbanking.api.Controllers.Models;
 
 namespace basicbanking.api.test
 {
@@ -70,9 +71,18 @@ namespace basicbanking.api.test
         {
             this._controllerInstance.InitTest();
 
-            this.Test_DepositBalanceHandler(1, 500, (float)499.50);
-            this.Test_DepositBalanceHandler(2, 750, (float)1749.25);
-            this.Test_DepositBalanceHandler(3, 1000, (float)1499);
+            Deposit deposit = new Deposit
+            {
+                itemId = 1,
+                amount = 500
+            };
+            this.Test_DepositBalanceHandler(deposit, (float)499.50);
+            deposit.itemId = 2;
+            deposit.amount = 750;
+            this.Test_DepositBalanceHandler(deposit, (float)1749.25);
+            deposit.itemId = 3;
+            deposit.amount = 1000;
+            this.Test_DepositBalanceHandler(deposit, (float)1499);
 
             this._controllerInstance.Dispose();
         }
@@ -82,27 +92,43 @@ namespace basicbanking.api.test
         {
             this._controllerInstance.InitTest();
 
-            this.Test_TransferCashHandler(2, 1, 500, 500, 500);
-            this.Test_TransferCashHandler(1, 3, 250, 250, 750);
-            this.Test_TransferCashHandler(2, 3, 250, 250, 1000);
-            this.Test_TransferCashHandler(3, 1, 1000, 0, 1250);
+            Transfer transfer = new Transfer
+            {
+                item1Id = 2,
+                item2Id = 1,
+                amount = 500,
+            };
+
+            this.Test_TransferCashHandler(transfer, 500, 500);
+            transfer.item1Id = 1;
+            transfer.item2Id = 3;
+            transfer.amount = 250;
+            this.Test_TransferCashHandler(transfer, 250, 750);
+            transfer.item1Id = 2;
+            transfer.item2Id = 3;
+            transfer.amount = 250;
+            this.Test_TransferCashHandler(transfer, 250, 1000);
+            transfer.item1Id = 3;
+            transfer.item2Id = 1;
+            transfer.amount = 1000;
+            this.Test_TransferCashHandler(transfer, 0, 1250);
 
             this._controllerInstance.Dispose();
         }
 
-        public void Test_DepositBalanceHandler(long acId1, float amount, float expectedBalance)
+        public void Test_DepositBalanceHandler(Deposit deposit, float expectedBalance)
         {
-            var balance = this._controllerInstance._bankaccountController.Deposit(acId1, amount);
+            var balance = this._controllerInstance._bankaccountController.Deposit(deposit);
 
             Assert.Equal<float>(expectedBalance, balance);
         }
 
-        public void Test_TransferCashHandler(long acId1, long acId2, float amount, float expectedBalance1, float expectedBalance2)
+        public void Test_TransferCashHandler(Transfer transfer, float expectedBalance1, float expectedBalance2)
         {
-            BankAccount account1 = this._controllerInstance._bankaccountController.GetItemById(acId1);
-            BankAccount account2 = this._controllerInstance._bankaccountController.GetItemById(acId2);
-            account1.Balance -= amount;
-            account2.Balance += amount;
+            BankAccount account1 = this._controllerInstance._bankaccountController.GetItemById(transfer.item1Id);
+            BankAccount account2 = this._controllerInstance._bankaccountController.GetItemById(transfer.item2Id);
+            account1.Balance -= transfer.amount;
+            account2.Balance += transfer.amount;
             this._controllerInstance._bankaccountController.UpdateItem(account1);
             this._controllerInstance._bankaccountController.UpdateItem(account2);
             Assert.Equal<float>(expectedBalance1, account1.Balance);
