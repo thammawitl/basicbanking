@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "basicbanking.web"
+		},
+		{
+			"path": "basicbanking.api.test"
 		}
 	],
 	"settings": {}

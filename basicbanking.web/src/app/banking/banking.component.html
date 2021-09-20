@@ -1,0 +1,37 @@
+<div class="content">
+    <h4>Select Transaction Type</h4>
+    <mat-radio-group class="radiogroup" [(ngModel)]="transactionChoice">
+        <mat-radio-button [value]="1">Deposit Money</mat-radio-button>
+        <mat-radio-button [value]="2">Transfer Money</mat-radio-button>
+    </mat-radio-group>
+
+    <div *ngIf="transactionChoice === 1" class="content">
+        <mat-form-field appearance="outline">
+            <mat-label>Each Deposit has a Fee of 0.01%</mat-label>
+            <input type="number" matInput placeholder="Amount" [(ngModel)]="amountDeposit">
+        </mat-form-field>
+
+        <p>Account Balance: {{account.balance}}</p>
+
+        <button mat-raised-button color="primary" (click)="makeDeposit()"> Deposit </button>
+    </div>
+    <div *ngIf="transactionChoice === 2" class="content">
+        <mat-form-field appearance="outline">
+            <mat-label>There is no fee for transfering money from one account to another</mat-label>
+            <input type="number" matInput placeholder="Amount" [formControl]="amountTransferControl">
+        </mat-form-field>
+
+        <!-- <p>Account Balance: {{account.balance}}</p> -->
+
+        <h3>TO</h3>
+
+        <mat-selection-list #accounttransfer [multiple]="false" (selectionChange)="selectionChange($event.option)">
+            <mat-label>Select an Account</mat-label>
+            <mat-list-option *ngFor="let bankaccount of bankList" [value]="bankaccount" >
+                {{bankaccount.iban}} : Balance - {{bankaccount.balance}}
+            </mat-list-option>
+            <button mat-raised-button color="primary" (click)="makeTransfer()"> Transfer </button>
+        </mat-selection-list>
+    </div>
+</div>
+
