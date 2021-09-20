@@ -1,4 +1,4 @@
-export class BankAccounts {
+export class BankAccount {
     iban: string;
     balance: number;
     userid: string;

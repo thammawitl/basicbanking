@@ -1,6 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { BankingResource } from '../common/resource/banking.service'
 import Swal from 'sweetalert2'
+import { User } from '../common/models/users';
+import { BankAccount } from '../common/models/bankaccounts';
+import { FormControl, Validators } from '@angular/forms';
+
 
 @Component({
   selector: 'app-user',
@@ -9,44 +13,37 @@ import Swal from 'sweetalert2'
 })
 
 export class UserComponent implements OnInit {
+  userList: User[];
+
+  userselectControl = new FormControl('', Validators.required);
+  accountModel: BankAccount
+
   constructor(
-    private bankingResource: BankingResource,
+    private bankingResource: BankingResource
   ) { }
 
   ngOnInit(): void {
-    this.simpleAlert()
+    this.loadUserData();
   }
 
-  simpleAlert(){  
-    Swal.fire({
-      title: 'Loading Data',
-      showCancelButton: false,
-      showLoaderOnConfirm: true,
-      didOpen: () => {
-        return this.bankingResource.getUserList()
-          .subscribe((data: Users) => {
-            return response.json()
-          },
-          error => {
-            Swal.fire({
-              icon: 'error',
-              timer: 1500,
-              timerProgressBar: true,
-              title: error,
-              text: 'Something went wrong try refresh the page!',
-            })
-          }
-          )
-      },
-      allowOutsideClick: () => !Swal.isLoading()
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          title: `${result.value.login}'s avatar`,
-          imageUrl: result.value.avatar_url
-        })
-      }
+  addAccount(){
+    Swal.showLoading();
+    this.bankingResource.addBankAccountByUserId(this.userselectControl.value.id).subscribe(x => {
+      this.loadUserData();
+      this.userselectControl.value.bankAccounts.push(x);
     })
+    Swal.fire();
+  }
+
+  loadUserData(){
+    Swal.showLoading()
+    this.bankingResource.getUserList().subscribe((user) => {
+      this.userList = user;
+    });
+    Swal.close();
   }  
 
+  selectionChange(e: any){
+    this.accountModel = e.value
+  }
 }

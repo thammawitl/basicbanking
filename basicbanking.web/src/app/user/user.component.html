@@ -1,1 +1,24 @@
-<p>user works!</p>
+<div class="bankcontainer">
+    <div class="content">
+        <h4>Select User For Making Transaction</h4>
+        <mat-form-field #user appearance="outline">
+          <mat-label>Select User</mat-label>
+          <mat-select [formControl]="userselectControl">
+            <mat-option *ngFor="let user of userList" [value]="user">
+              {{user.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        
+        
+        <mat-selection-list #account *ngIf="userselectControl.valid" [multiple]="false" (selectionChange)="selectionChange($event.option)">
+            <mat-label>Select an Account</mat-label>
+            <mat-list-option *ngFor="let bankaccount of userselectControl.value.bankAccounts" [value]="bankaccount" >
+              {{bankaccount.iban}} : Balance - {{bankaccount.balance}}
+            </mat-list-option>
+            <button mat-raised-button color="primary" (click)="addAccount()"> Add an Account </button>
+        </mat-selection-list>
+
+    </div>
+    <app-banking style="width: 50%;" [account]="accountModel" *ngIf="accountModel !== undefined"></app-banking>
+</div>

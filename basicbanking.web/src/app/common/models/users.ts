@@ -1,9 +1,9 @@
-import { BankAccounts } from "./bankaccounts"
+import { BankAccount } from "./bankaccounts"
 
-export class Users {
+export class User {
     id: number;
     name: string;
     bankaccounts: [
-        BankAccounts
+        BankAccount
     ]
 }

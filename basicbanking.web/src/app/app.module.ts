@@ -9,6 +9,7 @@ import { BankingResource  } from './common/resource/banking.service';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppMaterialModule } from './common/app-module.material';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,9 @@ import { AppMaterialModule } from './common/app-module.material';
     AppRoutingModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    AppMaterialModule
+    AppMaterialModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [BankingResource],
   bootstrap: [AppComponent]
