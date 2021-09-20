@@ -1,6 +1,6 @@
 export class BankAccount {
     iban: string;
     balance: number;
-    userid: string;
+    userid: number;
     id: number;
 }

@@ -19,23 +19,23 @@ export class BankingResource {
     }
 
     // Get BankAccount list with User id
-    getBankAccountListByUserId(userId : Number) {
+    getBankAccountListByUserId(userId : number) {
         return this.http.get<BankAccount[]>(this.resourceURL + `bankaccount/accountbyuser/${userId}`);
     }
 
     // Add BankAccount to Current Selected User
-    addBankAccountByUserId(userId : Number) {
+    addBankAccountByUserId(userId : number) {
         return this.http.post<BankAccount>(this.resourceURL + 'bankaccount', {'userId': userId});
     }
 
     // Add money to Selected BankAccount with Fee
-    makeDepositByUserId(accountId : Number, amount: Number) {
-        return this.http.post<Number>(this.resourceURL + 'bankaccount', {'itemId': accountId, 'amount': amount});
+    makeDepositByAccountId(accountId : number, amount: number) {
+        return this.http.post<number>(this.resourceURL + 'bankaccount/deposit', {'itemId': accountId, 'amount': amount});
     }
 
     // Transfer money from first account to second account without fee
-    makeTransfer(accountId_1 : Number, accountId_2 : Number, amount: Number) {
-        return this.http.post<Number>(this.resourceURL + 'bankaccount', {'item1Id': accountId_1, 'item2Id': accountId_2, 'amount': amount});
+    makeTransfer(accountId_1 : number, accountId_2 : number, amount: number) {
+        return this.http.post<number>(this.resourceURL + 'bankaccount/transfer', {'item1Id': accountId_1, 'item2Id': accountId_2, 'amount': amount});
     }
 
 }
