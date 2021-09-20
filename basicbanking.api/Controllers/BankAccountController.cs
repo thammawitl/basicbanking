@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SinKien.IBAN4Net;
 
 namespace basicbanking.api.Controllers
 {
@@ -22,6 +23,31 @@ namespace basicbanking.api.Controllers
         {
             this._repo.Include(u => u.User);
             return base.GetItems();
+        }
+
+        public override BankAccount Add(BankAccount item)
+        {
+            Random generator = new Random();
+            var accountPrefix = generator.Next(0, 99).ToString("D2");
+            var accountNum = generator.Next(0, 1000000000).ToString("D10");
+            Iban iban = new IbanBuilder()
+            .CountryCode(CountryCode.GetCountryCode("NL"))
+            .BankCode("AALB")
+            .AccountNumberPrefix(accountPrefix)
+            .AccountNumber(accountNum)
+            .Build();
+
+            item.IBAN = iban.ToString();
+            return base.Add(item);
+        }
+
+        [HttpGet]
+        [Route("accountbyuser/{id}")]
+        //Transfer
+        public IActionResult GetAccountByUserId(long id)
+        {
+            var accounts = base.GetItems().Where(x=> x.UserId == id);
+            return Ok(accounts);
         }
 
         [HttpPost]
