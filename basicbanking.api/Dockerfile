@@ -15,4 +15,5 @@ WORKDIR /app
 COPY --from=build-env /app/dist .
 
 CMD ASPNETCORE_HTTPS_PORT=5001
-CMD ASPNETCORE_URLS=http://*:$PORT dotnet basicbanking.api.dll
+# CMD ASPNETCORE_URLS=http://*:$PORT dotnet basicbanking.api.dll
+ENTRYPOINT ["dotnet", "basicbanking.api.dll"]
