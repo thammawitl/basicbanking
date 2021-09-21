@@ -1,0 +1,44 @@
+version: "3"
+services:
+  db:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: db
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 1234
+      DATABASE_URL: postgres://root:1234@localhost:5432/db
+    volumes:
+      - ./basicbanking.api/db:/docker-entrypoint-initdb.d
+
+  api:
+    build:
+      context: .
+      dockerfile: ./basicbanking.api/Dockerfile
+    image: basicbanking-api
+    restart: on-failure
+    ports:
+      - 5001:5001
+    depends_on:
+      - db
+
+  web:
+    build:
+      context: .
+      dockerfile: ./basicbanking.web/Dockerfile
+    image: basicbanking-web
+    volumes:
+      - ".:/app"
+      - "/app/node_modules"
+    ports:
+      - "80:80"
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8900:8080
+
+volumes:
+  pgadmin:
